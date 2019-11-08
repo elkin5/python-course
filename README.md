@@ -3,7 +3,7 @@ Para comenzar, será necesario que instalemos python y aprovechando la ocasión,
 
 ## Instalar Python 3.8 ##
 
-1. Instalar librerias necesarias
+1. Instalar librerías necesarias
 ``` bash
 sudo apt-get install build-essential checkinstall
 sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
@@ -24,7 +24,7 @@ sudo ./configure --enable-optimizations
 sudo make altinstall
 ```
 
-4. Chequear version
+4. Chequear versión
 ``` bash
 python3.8 -V
 ```
@@ -36,7 +36,7 @@ sudo rm -f Python-3.8.0.tgz
 ```
 
 ## Instalación de Virtualenv
-Si no sabes qué es virtualenv ... ...
+Si no sabes qué es virtualenv, puedes aprender un poco más sobre su uso, ventajas, etc en el siguiente enlace: ...
 
 1. Instalar virtualenv
 ``` bash
@@ -57,7 +57,7 @@ source /media/DATOS/LUCAS/Programming/Python/azul_web/ambiente/bin/activate
 # (ambiente) usr@...
 ```	
 
-4. Chequear la version de Python y actualizar pip
+4. Chequear la versión de Python y actualizar pip
 ``` bash
 python -V
 
@@ -81,7 +81,7 @@ python
 ``` python
 print ("Hola mundo!")
 ``` 
-Momento, qué es un statement? Un statement es cualquier instrucción que pueda ser ejecutada por el intérprete de Python.
+Pero... qué es un statement? Un statement es cualquier instrucción que pueda ser ejecutada por el intérprete de Python.
 Al ejecutar la instrucción anterior, verás en pantalla el mensaje "Hola mundo!", esto quiere decir que todo funciona!
 
 3. Salir del intérprete
