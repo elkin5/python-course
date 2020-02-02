@@ -13,7 +13,7 @@ CONDICIONES = {
     "El año pasado": "today.year - date.year == 1",
 }
 
-def ultima_modificacion(fecha):
+def ultima_modificacion(fecha, *args):
     ''' Devuelve hace cuanto fue modificado un archivo recibiendo la fecha en la cual fue modificado.
 
     Parameters:
