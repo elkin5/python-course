@@ -14,4 +14,4 @@ class Punto:
 p1 = Punto(1, 2)
 p2 = Punto(3, 4)
 
-p1.distancia(p2) == Punto.distancia(p1, p2)
+print(p1.distancia(p2) == Punto.distancia(p1, p2))

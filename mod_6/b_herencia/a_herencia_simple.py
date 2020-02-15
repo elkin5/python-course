@@ -5,9 +5,8 @@ class Persona:
 class Profesor(Persona):
 	pass
 
+perso = Persona()
 profe = Profesor()
 
-print(isinstance(profe, Profesor))
-print(isinstance(profe, Persona))
-
-profe.hablar("Hola!")
+perso.hablar("Hola gente!")
+profe.hablar("Hola alumnos!")

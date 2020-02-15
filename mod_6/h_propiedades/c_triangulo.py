@@ -13,8 +13,12 @@ class Triangulo:
 			raise ValueError("La altura no puede ser un número negativo")
 		self._altura = altura
 
+	def get_base(self):
+		print("Se obtuvo el valor de la base...")
+		return self._base
+
 
 t = Triangulo(4, 3)
-t.set_base(-4)
-
+#t.set_base(-4)
+print(t.get_base())
 

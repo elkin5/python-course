@@ -1,8 +1,8 @@
 class Automovil:
     ruedas = 4
     def __init__(self, marca, color):
-            self.marca = marca
-            self.color = color
+        self.marca = marca
+        self.color = color
 
 
 auto_1 = Automovil("Audi", "Negro")

@@ -1,7 +1,7 @@
 class Perro:
     trucos = []
     def __init__(self, nombre):
-            self.nombre = nombre
+        self.nombre = nombre
 
 
 p1 = Perro("Firulais")

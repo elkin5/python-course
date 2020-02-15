@@ -10,4 +10,5 @@ class Persona:
 
 departamento = Vivienda()
 perso = Persona()
+
 perso.ingresar_vivienda(departamento)

@@ -15,3 +15,5 @@ class Triangulo:
 	
 t = Triangulo(4, 5)
 print(t.base)
+t.base = 10
+t.base = -50

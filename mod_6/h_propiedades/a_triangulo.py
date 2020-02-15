@@ -7,3 +7,6 @@ class Triangulo:
 
 t = Triangulo(4, 3)
 print(t.area)
+
+t.base = 10
+print(t.area)

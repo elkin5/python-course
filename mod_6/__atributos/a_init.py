@@ -1,5 +1,5 @@
 class Persona:
     def __init__(self):
-            print("Inicializando objeto...")
+        print("Inicializando objeto...")
 
 p = Persona()

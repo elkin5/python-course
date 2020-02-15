@@ -4,5 +4,6 @@ class Persona:
 		self._secreto = secreto
 
 p = Persona("Juan", "Prefiere Java")
+
 print("Nombre:", p.nombre)
 print("Secreto:", p._secreto)
