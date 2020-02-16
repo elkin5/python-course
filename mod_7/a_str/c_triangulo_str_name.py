@@ -26,11 +26,13 @@ class Triangulo:
 	@property
 	def area(self):
 		return self.base * self.altura / 2
+
+	def __str__(self):
+		return f'{type(self).__name__} de base {self.base} y altura {self.altura}.'
 	
 if __name__ == '__main__':
 
 	t = Triangulo(4, 5)
 	print("Área:", t.area)
 
-	t.base = 10
-	print("Nueva área:", t.area)
+	print("t es un", t)
