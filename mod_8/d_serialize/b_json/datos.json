@@ -1,0 +1,25 @@
+{
+  "personas": [
+    {
+      "__class__": "a_personas.Persona",
+      "__value__": {
+        "nombre": "Lucas",
+        "skills": [
+          "Python",
+          "C++",
+          "JS"
+        ]
+      }
+    },
+    {
+      "__class__": "a_personas.Persona",
+      "__value__": {
+        "nombre": "Juan",
+        "skills": [
+          "Java",
+          "C#"
+        ]
+      }
+    }
+  ]
+}

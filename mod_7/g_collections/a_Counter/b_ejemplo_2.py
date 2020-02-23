@@ -6,3 +6,5 @@ count = Counter(lenguajes_usuarios)
 
 print(count.most_common(1))
 print(count.most_common())
+
+#for k,v in count.items():
