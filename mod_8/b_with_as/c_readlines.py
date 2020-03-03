@@ -5,4 +5,4 @@ with open("lorem.txt") as file:
 	print(type(lineas), "| Elementos:", len(lineas))
 	print("Var lineas:", lineas)
 
-	#[print(line) for line in file.readlines()]
+	[print(line) for line in file.readlines()]
