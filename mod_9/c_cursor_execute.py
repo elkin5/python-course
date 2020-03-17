@@ -13,3 +13,5 @@ cursor.execute('CREATE TABLE if not exists pacientes(id integer PRIMARY KEY, nom
 #cerramos conexiones
 cursor.close()
 conexion.close()
+
+

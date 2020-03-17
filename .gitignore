@@ -1,3 +1,4 @@
 # virtualenv folder
 ambiente/
 ambiente/*
+*.sqlite3
