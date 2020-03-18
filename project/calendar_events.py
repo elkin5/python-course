@@ -17,7 +17,7 @@ DB_CONN = sqlite3.connect(DB_NAME)
 def close_conn(conexion=DB_CONN):
     conexion.close()
 
-def create_tables():
+def iniciar_bbdd():
 
     cursor = DB_CONN.cursor()
 
@@ -37,15 +37,12 @@ def create_tables():
         CREATE TABLE if not exists asistentes(
             pk integer PRIMARY KEY AUTOINCREMENT, 
             mail text,
-            evento INTEGER REFERENCES evento(pk) ON UPDATE CASCADE
+            evento INTEGER REFERENCES evento(pk) ON DELETE CASCADE ON UPDATE CASCADE
             )'''
         )
 
+    #cursor.execute("PRAGMA foreign_keys=ON");
     cursor.close()
-
-class QuerySet(object):
-    def __init__(self, *args, **kwargs):
-        [setattr(self, k, v) for k,v in kwargs.items()]
 
 class Asistente(object):
     def __init__(self, mail, evento, pk=None):
@@ -93,9 +90,6 @@ class Asistente(object):
     def exists(self):
         if not DB_CONN:
             raise RuntimeError("No hay conexión a la base de datos.")
-
-        #if not self.pk:
-        #    return False
 
         cursor = DB_CONN.cursor()
         sql = f'SELECT * FROM asistentes where (mail="{self.mail}" AND evento={self.evento}) OR (pk={self.pk if self.pk else -1});'
@@ -148,18 +142,18 @@ class Asistente(object):
 
 class Evento(object):
 
-    def __init__(self, titulo, pk=None, ubicacion="", inicio=dt.datetime.now(), fin=dt.datetime.now(), descripcion=""):
+    def __init__(self, titulo, pk=None, ubicacion="", inicio=dt.datetime.now(), fin=dt.datetime.now(), descripcion="", asistentes=[]):
 
         self.pk = pk
         self.titulo = titulo
         self.ubicacion = ubicacion
-        self.inicio = inicio
-        self.fin = fin
+        self.inicio = inicio if isinstance(inicio, dt.datetime) else dt.datetime.fromisoformat(inicio)
+        self.fin = fin if isinstance(fin, dt.datetime) else dt.datetime.fromisoformat(fin)
         self.descripcion = descripcion
-        self.asistentes = []
+        self.asistentes = asistentes
 
     def __str__(self):
-        return f'{self.titulo} desde el {self.inicio} hasta el {self.fin}'
+        return f'{self.titulo} | Del {self.inicio.strftime("%Y-%m-%d a las %H:%M")} al {self.fin.strftime("%Y-%m-%d a las %H:%M")}'
 
     @classmethod
     def objects(cls, _operator="AND", **kwargs):
@@ -182,17 +176,51 @@ class Evento(object):
         for registro in registros:
 
             ev = cls(
-                pk = registro[0],
+                pk = int(registro[0]),
                 titulo = registro[1],
                 ubicacion = registro[2],
-                inicio = registro[3],
-                fin = registro[4],
+                inicio = dt.datetime.fromisoformat(registro[3]),
+                fin = dt.datetime.fromisoformat(registro[4]),
                 descripcion = registro[5],
                 )
 
             #get all assistents
             asistentes = Asistente.objects(evento=registro[0])
-            ev.asistentes.extend([asistente.mail for asistente in asistentes])
+            ev.asistentes = [asistente.mail for asistente in asistentes]
+            evs.append(ev)
+
+        cursor.close()
+        return evs
+
+    @classmethod
+    def day_events(cls, day):
+        if not DB_CONN:
+            raise RuntimeError("No hay conexión a la base de datos.")
+
+        cursor = DB_CONN.cursor()
+
+        sql = f'''
+            SELECT * FROM eventos
+            WHERE DATE("{str(day)}") BETWEEN DATE(inicio) AND DATE(fin)
+            '''
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        evs = []
+        for registro in registros:
+
+            ev = cls(
+                pk = int(registro[0]),
+                titulo = registro[1],
+                ubicacion = registro[2],
+                inicio = dt.datetime.fromisoformat(registro[3]),
+                fin = dt.datetime.fromisoformat(registro[4]),
+                descripcion = registro[5],
+                )
+
+            #get all assistents
+            asistentes = Asistente.objects(evento=registro[0])
+            ev.asistentes = [asistente.mail for asistente in asistentes]
             evs.append(ev)
 
         cursor.close()
@@ -248,8 +276,8 @@ class Evento(object):
             )
 
         if not self.exists:
+
             #Insertamos los valores
-            
             cursor.execute('''
                 INSERT INTO eventos(
                     titulo, 
@@ -263,6 +291,10 @@ class Evento(object):
                 valores)
 
             self.pk = int(cursor.lastrowid)
+
+            #Como el evento no existe, inserto los asistentes sin comprobar si existen
+            [Asistente(mail=asistente, evento=self.pk).save() for asistente in self.asistentes]
+
         else:
             #Actualizamos valores
             sql = ''' 
@@ -276,6 +308,13 @@ class Evento(object):
             
             cursor.execute(sql, valores)
 
+            #Elimino todos los asistentes que no estan incluidos en self.asistentes
+            for asistente in Asistente.objects(evento=self.pk):
+                asistente.delete() if asistente.mail not in self.asistentes else None
+
+            #Inserto los asistentes. El método save se encarga de determinar si ya existe en la bbdd
+            [Asistente(mail=asistente, evento=self.pk).save() for asistente in self.asistentes]
+
         DB_CONN.commit()
         cursor.close()
 
@@ -283,34 +322,12 @@ class Evento(object):
         if not self.exists:
             raise ValueError(f'El objeto de pk {self.pk} no existe en la base de datos')
 
+        #Elimino todos los asistentes que no estan incluidos en self.asistentes
+        [asistente.delete() for asistente in Asistente.objects(evento=self.pk)]
+
         cursor = DB_CONN.cursor()
         sql = f'DELETE FROM eventos WHERE pk = "{self.pk}"'
         cursor.execute(sql)
 
         DB_CONN.commit()
         cursor.close()
-
-if __name__ == '__main__':
-    
-    create_tables()
-
-    # ev = Evento(titulo="Test", pk=1, ubicacion="new location 2", inicio=dt.datetime.now(), fin=dt.datetime.now(), descripcion="Save testing")
-    # ev.save()
-    # ev = Evento(titulo="Test33", pk=2, ubicacion="new location 2", inicio=dt.datetime.now(), fin=dt.datetime.now(), descripcion="Save testing")
-    # ev.save()
-    #ev = Evento(titulo="Test777", pk=2, ubicacion="new location 2", inicio=dt.datetime.now(), fin=dt.datetime.now(), descripcion="Save testing")
-    #ev.save()
-
-    #ev.add_asistente("lucaslucyk@gmail.com")
-    #ev.add_asistente("lucyklucas@gmail.com")
-
-    #print([asistente for asistente in ev.asistentes])
-    #evs = Evento.objects(pk=2)
-    #evs[0].delete_asistente("lucyklucas@gmail.com")
-
-    for obj in Evento.objects():
-        print (obj, obj.asistentes)
-
-
-    close_conn(DB_CONN)
-    
